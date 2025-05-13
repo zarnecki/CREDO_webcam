@@ -22,7 +22,7 @@ Only about 20 of these are true cosmic event, rest is due to noise.
 Algorithm run on the stored data found much more (966) noise-like events.
 File size: 1GB.
 
-**Signal sample**: 15052 frames captured in 36 minutes with radioactive source (^137^Cs).
+**Signal sample**: 15052 frames captured in 36 minutes with radioactive source (caesium 137).
 339 events were identified on-line, 94% of which were also found on file recorded with H264 codec.
 119 additional event (mostly with low significance) were found off-line (on recorded file).
 File size: about 110MB.
