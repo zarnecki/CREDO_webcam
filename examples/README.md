@@ -30,10 +30,11 @@ and stored on file.
 Python notebook showing how to store images read from webcam into movie file. 
 Different compression algorithms can be used to encode the file, this is also 
 platform dependent. When testing in linux (Fedora 41) H264 format looked like
-giving best results. The plot below compares cosmic event as read directly from 
-webcam (top plot) and stored in H264, MJPG and XVID formats. 
+giving best results. Plots below compare two cosmic event as read directly from 
+webcam (top row) and stored in H264, MJPG and XVID formats. 
 
-![Event plot](video_save_test.ipynb)
+![Event 1](video_save_test_half.png)
+![Event 2](video_save_test_2_half.png)
 
 More documentation on OpenCV is available at [this link](https://docs.opencv.org/2.4/index.html).
 
