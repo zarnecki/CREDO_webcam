@@ -25,5 +25,15 @@ where `Mthr` and `Athr` are parameters of the algorithm. Frame with the "flash"
 is displayed on screed (with small yellow frame indicating position of the flash)
 and stored on file.
 
+- video_save_test.ipynb
+
+Python notebook showing how to store images read from webcam into movie file. 
+Different compression algorithms can be used to encode the file, this is also 
+platform dependent. When testing in linux (Fedora 41) H264 format looked like
+giving best results. The plot below compares cosmic event as read directly from 
+webcam (top plot) and stored in H264, MJPG and XVID formats. 
+
+![Event plot](video_save_test.ipynb)
+
 More documentation on OpenCV is available at [this link](https://docs.opencv.org/2.4/index.html).
 
