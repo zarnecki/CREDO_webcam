@@ -88,7 +88,16 @@ only 9 events in off-line analysis (with nominal thresholds).
 File size about 1.6 GB.
 
 
-Many low threshold events due to noise (?) in column 633. 
+Most low threshold events due to noise (?) in column 633. 
 On-line event distribution on the sensor plane is shown below (open circles for low threshold, filled circles for higher one):
 
 ![Vakoss 2D](vakoss_background_2d_half.png)
+
+**Signal sample**: 4716 frames captured in about 9 minutes with small X-ray tube (rate about 8 Hz).
+44 events fount on-line, most with high significance, all also identified off-line. 
+Events look like particles crossing perpendicular to the sensor surface, 
+all are "point like" with no elongation:
+
+![Vakoss event 1](vakoss_signal_x_frame_1908_crop.png)  ![Vakoss event 2](vakoss_signal_x_frame_4354_crop.png)
+
+
