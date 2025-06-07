@@ -65,8 +65,10 @@ if narg>5 :   # Averaging period
 
 if cor == 0:
     cap = cv2.VideoCapture(mycam) 
+    outname = 'cam_'+str(mycam)
 else:
-    cap = cv2.VideoCapture(myname) 
+    cap = cv2.VideoCapture(myname)
+    outname = 'file'
 
 if not cap.isOpened() :
     print(f"Could not open video device {mycam}")
@@ -108,12 +110,14 @@ Max_list = []
 Mean_list = []
 
 # History of events
+
 Nevt = 0
 
 Tevt_list = []
 Nevt_list = []
 Sig_list = []
 Val_list = []
+Shape_list = []
 
 frac = 1.0/Nmax
 frac1 = 1.0 - frac
@@ -171,25 +175,21 @@ while(cap.isOpened()):
                         neathr += 1 #counting how many instances of pixels above threshold are in 3x3 squere
                 if(neathr >= Nthr) :   
                     next = 1
+                    xmax = abthr[x][1]   # Store location of the pixel which passes the condition
+                    ymax = abthr[x][0]
                     break
+                
             if next == 1 :
+
                 #getting the area, a and b are x and y respectively
-                amin = 20000 #larger then any reasonable camera
-                amax = 0
-                bmin = 20000 #larger then any reasonable camera
-                bmax = 0
-                for i in range (nabthr):
-                    if (abthr [i] [0] < amin):
-                        amin = abthr [i] [0]
-                    if (abthr [i] [0] > amax):
-                        amax = abthr [i] [0]
-                    if (abthr [i] [1] < bmin):
-                        bmin = abthr [i] [1]
-                    if (abthr [i] [1] > bmax):
-                        bmax = abthr [i] [1]
+
+                amin,bmin = np.min(abthr,axis=0)
+                amax,bmax = np.max(abthr,axis=0)
 
                 square_size = np.sqrt (nabthr)
+                
                 #estimating the shape
+                
                 what_shape = -1
                 if (amax - amin <= square_size and bmax - bmin <= square_size):
                     #impact was perpendicular
@@ -201,59 +201,51 @@ while(cap.isOpened()):
                     if (amax - amin <= square_size and bmax - bmin > square_size):
                         #impact was vertical
                         what_shape = 2
+                        
                 #something has to be implemented for an occasion when there are lone pixels outside our "main" bunch TBD
 
-                fsort = np.argsort (sigframe.flatten())
-                gsort = gray.flatten () [fsort]
-                ssort = sigframe.flatten () [fsort]
-
-                nsort = fsort.size
-                        
-                # Lowest of the required signal pixels
-                ithr = nsort - Nthr
-    
-                # Required number of frame pixels found above threshold (with significance > 1)
+                # Store frame parameters
+                
                 Tevt_list.append(t_frame)
                 Nevt_list.append(Nframe)
-                Val_list.append(gsort[ithr])
-                Sig_list.append(ssort[ithr])
+                Val_list.append(gray[ymax,xmax])
+                Sig_list.append(sigframe[ymax,xmax])
                 Nevt += 1
 
                 # flat corrected frame
                 
                 fcorr = np.maximum(gray - Vmean + np.mean(Vmean), 0.).astype(np.uint8)
 
-                outname1 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_unclassified.png'
-                outname2 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_unclassified_corr.png'
+                outname1 = outname+'_frame_'+str(Nframe)+'_unclassified.png'
+                outname2 = outname+'_frame_'+str(Nframe)+'_unclassified_corr.png'
+                hit = "unclassified"
 
                 #perpendicular, horizontal, vertical
                 if what_shape == 0:
-                    outname1 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_perpendicular_impact.png'
-                    outname2 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_perpendicular_impact_corr.png'
-                    hit = " perpendicular_impact"
+                    outname1 = outname+'_frame_'+str(Nframe)+'_perpendicular_impact.png'
+                    outname2 = outname+'_frame_'+str(Nframe)+'_perpendicular_impact_corr.png'
+                    hit = "perpendicular"
                 if what_shape == 1:
-                    outname1 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_horizontal_impact.png'
-                    outname2 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_horizontal_impact_corr.png'
-                    hit = " horizontal_impact"                  
+                    outname1 = outname+'_frame_'+str(Nframe)+'_horizontal_impact.png'
+                    outname2 = outname+'_frame_'+str(Nframe)+'_horizontal_impact_corr.png'
+                    hit = "horizontal"                  
                 if what_shape == 2:
-                    outname1 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_vertical_impact.png'
-                    outname2 = 'cam_'+str(mycam)+'_frame_'+str(Nframe)+'_vertical_impact_corr.png'
-                    hit = " vertical_impact"
+                    outname1 = outname+'_frame_'+str(Nframe)+'_vertical_impact.png'
+                    outname2 = outname+'_frame_'+str(Nframe)+'_vertical_impact_corr.png'
+                    hit = "vertical"
+
+                Shape_list.append(what_shape)
 
                 #saving original and corrected image
                 cv2.imwrite (outname1, frame, [cv2.IMWRITE_PNG_COMPRESSION, 3])   # Default is 16 - poor quality !
                 cv2.imwrite (outname2, fcorr, [cv2.IMWRITE_PNG_COMPRESSION, 3])
 
-                xmax = fsort [-1] % frame.shape [1]
-                ymax = fsort [-1] // frame.shape [1]
-        
                 cv2.drawMarker (frame,(xmax,ymax), (200,200,255), cv2.MARKER_SQUARE, 20, 1)     # Light red square. Color is (B,G,R) !
-                
                 cv2.imshow('WebCam',frame)
         
-                cv2.setWindowTitle('WebCam','WebCam event #'+str(Nframe)+' maximum at '+str(xmax)+':'+str(ymax) +str ( hit))
+                cv2.setWindowTitle('WebCam','Event #'+str(Nframe)+' max at '+str(xmax)+':'+str(ymax)+" "+str(hit)+" "+str(nabthr)+" pixels")
         
-                print("\nFrame # ",Nframe," : ",gsort[ithr:]," at (",xmax,",",ymax,")  S = ", ssort[ithr:], hit)
+                print("\nFrame # ",Nframe," : ",gray[ymax,xmax]," at (",xmax,",",ymax,")  S = ", sigframe[ymax,xmax],hit,nabthr," pixels")
             
             # Add to sum (also if event detected !)
             Vmax  = np.maximum(frac1*Vmax + frac*Vmean, gray)
@@ -285,3 +277,20 @@ cap.release()
 cv2.destroyAllWindows()
 
 #note: we need to add something to close the program if the display window gets closed;
+
+print(f"{Nevt} events found in {tcap} s")
+
+if Nevt>0 and cor==0:
+    tevt = tcap/Nevt
+    print(f"Average time between events is {tevt} s")
+
+# Print shape counts
+
+shnames = ['Unknown','Perpendicular','Horizontal','Vertical']   # Shape values start at -1 (!)
+
+shapes = np.array(Shape_list)
+
+for ish in range(len(shnames)):
+    print(shnames[ish]," : ",np.sum(shapes==ish-1))
+
+    
