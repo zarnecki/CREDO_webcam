@@ -3,28 +3,70 @@ import cv2
 from datetime import datetime
 from matplotlib import pyplot as plt
 
-#### Simple threshold requirement:
+# For input arguments
+
+import sys
+
+
+### Default algorithm settings
+#
+#  Simple threshold requirement:
 #  At least Nthr pixels with value Athr counts above  Mthr times maximum-mean from mean
 
-Nthr = 3    # number of pixels required above threshold
-Athr = 10    # threshold in pixels
+Nthr =  3    # number of pixels required above threshold
+Athr = 10    # threshold in pixel value
 Mthr =  4    # threshold in maximum-mean distance for given pixel
 
 # Averaging period for maximum and mean calculation
 
 Nmax = 100
-# Open device
 
-# mycam = 7    # Device number for second external WebCam
-mycam = 0    # Build-in webcam
+### Default input stream
 
-#cam (0) or recording (1)
-cor = 1
+mycam = 0    # webcam device id (0 for built-in webcam)
+
+myfile = "signal.avi"
+
+cor = 1    #  device (0) or file (1)
+
+### Check input arguments
+
+narg = len(sys.argv)   # including script name passed to python (!)
+
+if narg == 1:
+    print("\n Usage: ",sys.argv[0]," device/file  [Nthr] [Athr] [Mthr] [Nmax]\n")
+    sys.exit()
+
+if narg>1 :   #  device or file name given
+
+    if len(sys.argv[1])>2 :
+        myname = sys.argv[1]
+        cor = 1
+    else:
+        mycam = int(sys.argv[1])
+        cor = 0
+
+# Read more arguments
+
+if narg>2 :   # Number of pixels above threshold
+    Nthr = int(sys.argv[2])
+
+if narg>3 :   # Threshold in amplitude
+    Athr = int(sys.argv[3])
+
+if narg>4 :   # Threshold in maximum-mean distance
+    Mthr = int(sys.argv[4])
+
+if narg>5 :   # Averaging period
+    Nmax = int(sys.argv[5])
+
+    
+### Actual code starts here
 
 if cor == 0:
     cap = cv2.VideoCapture(mycam) 
 else:
-    cap = cv2.VideoCapture("signal.avi") 
+    cap = cv2.VideoCapture(myname) 
 
 if not cap.isOpened() :
     print(f"Could not open video device {mycam}")
