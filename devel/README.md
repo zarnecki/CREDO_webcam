@@ -12,3 +12,5 @@ checking if enough pixels are grouped up together, doing
 a basic impacts assessment (in form of deciding whether it was
 perpendicular, vertical or horizontal) and some optimisation (by moving
 some parts of the code around). 
+
+Parsing of input arguments, some more optimization and minor changes in output added by AFZ.
