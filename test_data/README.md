@@ -100,4 +100,27 @@ all are "point like" with no elongation:
 
 ![Vakoss event 1](vakoss_signal_x_frame_1908_crop.png)  ![Vakoss event 2](vakoss_signal_x_frame_4354_crop.png)
 
+---
+
+### Software performance plots
+
+Two example plots are including below, showing the webcam performance in radiation detection. 
+The observed time sequences prooves that observed are real interactions in the webcam sensors and not the webcam noise.
+
+- **Targus** (model AVC05EU) irradiated with caesium 137 source
+
+The source was only placed on the webcam lens cover after first 3000 frames were taken (in about 7 minutes).
+Only two events were detected before the source was placed and 337 events in the rest of the run (about 29 minutes).
+
+![Targus signal Cs137](targus_signal_cs137.png)
+
+
+- **Vakoss** WS-3335 irradiated with X-ray
+
+The webcam was placed in front of the portable X-ray tube. 
+To avoid overheating, the tube is working in the "pulse" mode: 
+X-ray is produced for about 40 seconds, followed by about 60 seconds of cooling time.
+This structure is clearly seen in the time sequence of the detected events.
+
+![Vakoss signal X-ray](vakoss_signal_x.png)
 
