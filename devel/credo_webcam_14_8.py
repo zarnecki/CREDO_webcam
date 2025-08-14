@@ -31,14 +31,16 @@ while (pm == 0):
     print ("Proszę wybierać funkcje wpisując podaną przy niej literę. Terminal obsługuje następujące funkcje: \n",
         "- l - pozwala wczytać współrzędne geograficzne obserwacji (podanie lokalizacji jest wymagane do celów badawczych), \n",
         "- m - otwiera opcje modyfikacji parametrów, \n",
+        "- q - (w trakcie działania programu) powoduje wyłączenie, \n",
         "- r - powoduje uruchomienie programu. \n",
         "- z - podaj źródło: nagranie czy kamerka.")
     inp = input ()
 
     #współrzędne
     if (inp == 'l'):
-        print ("Proszę podać szerokość i długość geograficzną:")
+        print ("Proszę podać szerokość geograficzną:")
         longitude = int (input())
+        print ("Proszę podać długość geograficzną:")
         latitude = int (input ())
         if (longitude < -180 or longitude > 180 or latitude < -90 or latitude > 90):
             print ("Proszę wpisać prawidłowe współrzędne.")
@@ -55,14 +57,14 @@ while (pm == 0):
     
     #źródło
     if (inp == 'z'):
-        print ("Czy źródłem ma być kamerka wbudowana (0), USB (1) czy nagranie (2)?")
-        inp = input ()
+        print ("Program wykorzystuje najpierw wbudowaną kamerkę (jeżeli taką posiadasz), a następnie USB. Czy źródłem ma być kamerka wbudowana (lub USB, jeżeli jej nie ma) (0), USB (jeżeli jest wbudowana) (1) czy nagranie (2)?")
+        inp = int (input ())
         if (inp == 0):
             cor = 0
             mycam = 0
         if (inp == 1):
             cor = 0
-            mycam = 0
+            mycam = 1
         if (inp == 2):
             cor = 1
             print ("Podaj nazwę pliku z nagraniem (musi znajdować się w tym samym folderze).")
@@ -266,7 +268,7 @@ while(cap.isOpened()):
         break
         
    # Break if 'q' pressed on display window
-    if cv2.waitKey(20) and 0xFF  ==  ord('q'):
+    if cv2.waitKey(20) & 0xFF  ==  ord('q'):
         break
 
 # Loop completed
@@ -300,12 +302,3 @@ shapes = np.array(Shape_list)
 
 for ish in range(len(shnames)):
     print(shnames[ish]," : ",np.sum(shapes==ish-1))
-
-#note: we need to add something to close the program if the display window gets closed;
-
-#notatki:
-# zapisywać datę/godzinę detekcji - by móc porównać logi ze sobą; // zrobione
-# zapisujemy dwa razy - do poprawienia; // nie zauważyłem podczas testowania
-# zaczęcie pomiaru musi wymagać podania lokalizacji - we współrzędnych geograficznych (program musi je dostać, inaczej niech się nie odpala), w miarę możliwości zrobić 
-# by program wysyłał ich do google maps czy by mogli wskazać w nim pinezkę i by program zczytywał idk;
-# sprawdzić, czy jest ograniczenie rozdzielczości do 640x480, czy można tym manipulować, zmieniać czas naświetlania; // zmiana rozdzielczości jest najwyraźniej dostępna.
