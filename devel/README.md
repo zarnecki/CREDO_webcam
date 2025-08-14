@@ -14,3 +14,9 @@ perpendicular, vertical or horizontal) and some optimisation (by moving
 some parts of the code around). 
 
 Parsing of input arguments, some more optimization and minor changes in output added by AFZ.
+
+- credo_webcam_14_8.py
+
+Version with the simple user interface in the terminal window. 
+Allows to set observer's position (latitude, longitude) and select input device (or file).
+More options still to come. 
