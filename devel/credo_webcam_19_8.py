@@ -6,8 +6,10 @@ from datetime import datetime
 #  At least Nthr pixels with value Athr counts above Mthr times maximum-mean from mean
 
 Nthr = 3     # number of pixels required above threshold
+Errorthr = 200 #number of 
 Athr = 10    # threshold in pixels
 Mthr =  4    # threshold in maximum-mean distance for given pixel
+
 
 # Averaging period for maximum and mean calculation
 
@@ -29,19 +31,18 @@ print ("Dzień dobry, witamy w terminalu obsługi.")
 
 while (pm == 0):
     print ("Proszę wybierać funkcje wpisując podaną przy niej literę. Terminal obsługuje następujące funkcje: \n",
-        "- l - pozwala wczytać współrzędne geograficzne obserwacji (podanie lokalizacji jest wymagane do celów badawczych), \n",
-        "- m - otwiera opcje modyfikacji parametrów, \n",
+        "- l - pozwala wczytać współrzędne geograficzne obserwacji (niezbędne do uruchomienia pomiaru) \n",
         "- q - (w trakcie działania programu) powoduje wyłączenie, \n",
         "- r - powoduje uruchomienie programu. \n",
-        "- z - podaj źródło: nagranie czy kamerka.")
+        "- z - podaj źródło (jeżeli jest więcej niż jedna kamerka, np. wbudowana i dodatkowa USB)")
     inp = input ()
 
     #współrzędne
     if (inp == 'l'):
-        print ("Proszę podać szerokość geograficzną:")
-        longitude = int (input())
-        print ("Proszę podać długość geograficzną:")
-        latitude = int (input ())
+        print ("Proszę podać szerokość geograficzną (z kropką zamiast przecinka):")
+        longitude = float (input())
+        print ("Proszę podać długość geograficzną (z kropką zamiast przecinka):")
+        latitude = float (input ())
         if (longitude < -180 or longitude > 180 or latitude < -90 or latitude > 90):
             print ("Proszę wpisać prawidłowe współrzędne.")
         else:
@@ -57,18 +58,9 @@ while (pm == 0):
     
     #źródło
     if (inp == 'z'):
-        print ("Program wykorzystuje najpierw wbudowaną kamerkę (jeżeli taką posiadasz), a następnie USB. Czy źródłem ma być kamerka wbudowana (lub USB, jeżeli jej nie ma) (0), USB (jeżeli jest wbudowana) (1) czy nagranie (2)?")
+        print ("Program wykorzystuje najpierw wbudowaną kamerkę (jeżeli taką posiadasz), a następnie USB. Czy źródłem ma być kamerka wbudowana (lub USB, jeżeli jej nie ma) (0) czy USB (jeżeli jest wbudowana) (1)?")
         inp = int (input ())
-        if (inp == 0):
-            cor = 0
-            mycam = 0
-        if (inp == 1):
-            cor = 0
-            mycam = 1
-        if (inp == 2):
-            cor = 1
-            print ("Podaj nazwę pliku z nagraniem (musi znajdować się w tym samym folderze).")
-            myfile = input ()        
+        mycam = inp
 
 #program
 
@@ -106,10 +98,20 @@ print("Default resolution: ",cap.get(cv2.CAP_PROP_FRAME_WIDTH)," x ",
 Vmax = 0.
 Vmean = 0.
 
+#making a log file
+t_start = datetime.now()
+name = str (t_start)
+name = "log_" + name + ".txt"
+name = name.replace (':', '_')
+output = open (name, "a")
+
+headway = "Dane zbierane na szerokosci " + str (longitude) + " i dlugosci " + str (latitude) + ", pomiar rozpoczeto o " + str (t_start)
+
+output.write (headway)
+
 # Main loop    
 
 Nframe = 0
-t_start = datetime.now()
 print(f"Data taking started at {t_start} ({t_start.timestamp():.3f})")
 
 # History of maximum counts
@@ -176,6 +178,12 @@ while(cap.isOpened()):
 
             abthr = np.transpose(np.nonzero(sigframe > 1)) #array of indexes of instances above treshold
             nabthr = np.size(abthr, 0) #size of the array
+
+            #check, if there isn't abnormal amount of detections
+            if (nabthr > Errorthr):
+                print ("Program wykrył nadzwyczajnie dużą ilość detekcji. Sprawdź, czy kamerka jest dobrze zaklejona i uruchom program ponownie.")
+                break
+
             next = 0 #0 if there are no 3 pixels above treshold next to each other and 1 it there are
             for x in range(nabthr):
                 neathr = 0
@@ -184,8 +192,8 @@ while(cap.isOpened()):
                         neathr += 1 #counting how many instances of pixels above threshold are in 3x3 squere
                 if(neathr >= Nthr) :   
                     next = 1
-                    xmax = abthr[x][1]   # Store location of the pixel which passes the condition
-                    ymax = abthr[x][0]
+                    xmax = abthr[x] [1]   # Store location of the pixel which passes the condition
+                    ymax = abthr[x] [0]
                     break
                 
             if next == 1 :
@@ -255,7 +263,11 @@ while(cap.isOpened()):
                 cv2.setWindowTitle('WebCam','Event #'+str(Nframe)+' max at '+str(xmax)+':'+str(ymax)+" "+str(hit)+" "+str(nabthr)+" pixels")
         
                 time = datetime.now()
-                print("\nTime:", time, " frame # ",Nframe," : ",gray[ymax,xmax]," at (",xmax,",",ymax,")  S = ", sigframe[ymax,xmax],hit,nabthr," pixels")
+
+                out_pom = "\nTime:" + str (time) + " frame # " + str (Nframe) + " : " + str (gray [ymax,xmax]) + " at (" + str (xmax) + "," + str (ymax) + ")  S = " + str (sigframe[ymax,xmax]) + " " + str (hit) + " " + str (nabthr) + " pixels"
+
+                print(out_pom)
+                output.write (out_pom) 
             
             # Add to sum (also if event detected !)
             Vmax  = np.maximum(frac1*Vmax + frac*Vmean, gray)
@@ -302,3 +314,5 @@ shapes = np.array(Shape_list)
 
 for ish in range(len(shnames)):
     print(shnames[ish]," : ",np.sum(shapes==ish-1))
+
+#note: we need to add something to close the program if the display window gets closed;
