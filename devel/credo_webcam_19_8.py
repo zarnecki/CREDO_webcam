@@ -58,9 +58,19 @@ while (pm == 0):
     
     #źródło
     if (inp == 'z'):
-        print ("Program wykorzystuje najpierw wbudowaną kamerkę (jeżeli taką posiadasz), a następnie USB. Czy źródłem ma być kamerka wbudowana (lub USB, jeżeli jej nie ma) (0) czy USB (jeżeli jest wbudowana) (1)?")
+        print ("Program wykorzystuje najpierw wbudowaną kamerkę (jeżeli taką posiadasz), a następnie USB. Czy źródłem ma być kamerka wbudowana (lub USB, jeżeli jej nie ma) (0), USB (jeżeli jest wbudowana) (1) czy nagranie (2)?")
         inp = int (input ())
-        mycam = inp
+        if (inp == 0):
+            cor = 0
+            mycam = 0
+        if (inp == 1):
+            cor = 0
+            mycam = 1
+        if (inp == 2):
+            cor = 1
+            print ("Podaj nazwę pliku z nagraniem (musi znajdować się w tym samym folderze).")
+            myfile = input ()        
+
 
 #program
 
