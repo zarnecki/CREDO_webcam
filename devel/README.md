@@ -4,9 +4,9 @@
 
 The catalog was created for codes created within the team project.
 
-- credo_webcam.py
+- **credo_webcam.py**
 
-Code developed by Dominik and Tytus (copied from TLarcius fork).
+Initial code developed by Dominik and Tytus (copied from TLarcius fork).
 Example algorithm for cosmic detection was extended by 
 checking if enough pixels are grouped up together, doing
 a basic impacts assessment (in form of deciding whether it was
@@ -15,8 +15,12 @@ some parts of the code around).
 
 Parsing of input arguments, some more optimization and minor changes in output added by AFZ.
 
-- credo_webcam_14_8.py
+- **credo_webcam_19_8.py**
 
-Version with the simple user interface in the terminal window. 
+Current code version. Recent developments:
+
+- Simple user interface in the terminal window added. 
 Allows to set observer's position (latitude, longitude) and select input device (or file).
 More options still to come. 
+- Simple check for poorly covered camera lenses: stops the program if too many events detected.
+
