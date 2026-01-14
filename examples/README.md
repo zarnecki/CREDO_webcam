@@ -36,5 +36,11 @@ webcam (top row) and stored in H264, MJPG and XVID formats.
 ![Event 1](video_save_test_half.png)
 ![Event 2](video_save_test_2_half.png)
 
+- dialog_opencv.ipynb
+
+OpenCV example described above (webcam_opencv) extended with simple dialog box (also based on OpenCV) to enter device ID and window title.
+
+---
+
 More documentation on OpenCV is available at [this link](https://docs.opencv.org/2.4/index.html).
 
